@@ -359,14 +359,14 @@ pre{margin:4px 0 0;padding:12px;border-radius:12px;background:var(--surface-2);f
 (function(){
   /* ---------- dados ---------- */
   var SIGNALS = {
-    hist:    {label:'Histórico confirmado de fraude', short:'Histórico de fraude', w:40, why:'Maior preditor individual'},
-    recus:   {label:'Múltiplas tentativas de pagamento recusadas', short:'Pagamentos recusados', w:25, why:'Padrão típico de fraude'},
-    curto:   {label:'Muitas compras em curto período', short:'Compras em sequência', w:20, why:'Comportamento anômalo de volume'},
-    diverg:  {label:'Divergência relevante entre dados de entrega e pagamento', short:'Endereço divergente', w:15, why:'Sinal de identidade inconsistente'},
-    primeira:{label:'Primeira compra com valor acima de R$ 800', short:'Primeira compra', w:10, why:'Risco de teste de cartão'},
-    horario: {label:'Horário fora do padrão histórico do cliente', short:'Horário atípico', w:5, why:'Sinal de acesso não habitual'}
+    primeira:{label:'Primeira compra com valor acima de R$ 800', short:'Primeira compra > R$ 800', w:40, why:'Sinal de maior peso individual'},
+    endereco:{label:'Endereço de entrega diferente do cadastro', short:'Endereço diferente', w:25, why:'Divergência de localização'},
+    curto:   {label:'Muitas compras em curto período', short:'Compras em sequência', w:20, why:'Comportamento atípico de volume'},
+    cartao:  {label:'Cartão diferente dos usados anteriormente', short:'Cartão diferente', w:15, why:'Troca de instrumento de pagamento'},
+    valor:   {label:'Valor acima de R$ 800', short:'Valor > R$ 800', w:10, why:'Ticket elevado sem histórico'},
+    horario: {label:'Horário fora do padrão histórico do cliente', short:'Horário atípico', w:5, why:'Acesso em horário incomum'}
   };
-  var SKEYS = ['hist','recus','curto','diverg','primeira','horario'];
+  var SKEYS = ['primeira','endereco','curto','cartao','valor','horario'];
   var CANAL = {'Marketplace A':'#5B6EE1','Marketplace B':'#1FA2B8','Marketplace C':'#C95FA3','Loja própria':'#6B8E23'};
   var SUP = {nome:'Ana Beatriz',id:'sup-ana-beatriz',ini:'AB'};
   var MOTIVOS = ['Fraude confirmada','Dados inconsistentes','Titular não reconhece a compra','Outro'];
@@ -381,32 +381,32 @@ pre{margin:4px 0 0;padding:12px;border-radius:12px;background:var(--surface-2);f
     rejeitar:['Cartão com contestação confirmada.','Cadastro com dados inconsistentes.','Titular informou que não reconhece a compra.']
   };
   var ORDERS = [
-    {id:'ND-48213',valor:4500,canal:'Marketplace A',nome:'Rafael M. Souza',sinais:['primeira','diverg','recus'],itens:'1× Notebook 15" Core i7',pagto:'Cartão final 4821',entrega:'Rua das Palmeiras, 120 · Vitória/ES',cad:'Av. Principal, 845 · Serra/ES',compras:0,rec:'17:41',prazo:142},
-    {id:'ND-48220',valor:1890,canal:'Loja própria',nome:'Camila A. Ferreira',sinais:['recus','curto','diverg'],itens:'2× Fone Bluetooth, 1× Smartwatch',pagto:'Cartão final 7730',entrega:'Rua do Sol, 77 · Linhares/ES',cad:'Rua das Flores, 310 · Colatina/ES',compras:2,rec:'17:55',prazo:38},
-    {id:'ND-48227',valor:7320,canal:'Marketplace B',nome:'Eduardo T. Lima',sinais:['hist','recus','diverg','primeira'],itens:'1× Smartphone 256 GB, 1× Notebook 14"',pagto:'Cartão final 0194',entrega:'Rua Beira-Mar, 33 · Guarapari/ES',cad:'Av. Central, 1020 · Cariacica/ES',compras:0,rec:'18:03',prazo:25},
-    {id:'ND-48231',valor:960,canal:'Marketplace C',nome:'Patrícia L. Nunes',sinais:['primeira','diverg','curto'],itens:'1× Caixa de som portátil, 1× Carregador turbo',pagto:'Cartão final 5512',entrega:'Rua Nova, 18 · São Mateus/ES',cad:'Rua da Paz, 402 · Nova Venécia/ES',compras:0,rec:'16:48',prazo:276},
-    {id:'ND-48235',valor:2150,canal:'Marketplace A',nome:'Henrique B. Costa',sinais:['horario','curto','diverg'],itens:'1× Monitor 27"',pagto:'Cartão final 3308',entrega:'Av. Atlântica, 560 · Vila Velha/ES',cad:'Rua do Porto, 12 · Vila Velha/ES',compras:6,rec:'17:10',prazo:190},
-    {id:'ND-48240',valor:3480,canal:'Marketplace B',nome:'Larissa P. Rocha',sinais:['recus','primeira'],itens:'1× Console de videogame, 2× Controle',pagto:'Cartão final 9087',entrega:'Rua Verde, 91 · Aracruz/ES',cad:null,compras:0,rec:'17:27',prazo:95},
-    {id:'ND-48244',valor:5900,canal:'Loja própria',nome:'Thiago N. Vieira',sinais:['hist','curto'],itens:'3× Tablet 10"',pagto:'Cartão final 2246',entrega:'Rua do Comércio, 205 · Cachoeiro/ES',cad:null,compras:4,rec:'17:49',prazo:52},
-    {id:'ND-48252',valor:820,canal:'Marketplace A',nome:'Bruno C. Matos',sinais:['primeira','recus'],itens:'1× Teclado mecânico, 1× Mouse gamer',pagto:'Cartão final 6619',entrega:'Rua Aurora, 640 · Serra/ES',cad:null,compras:0,rec:'18:10',prazo:310}
+    {id:'ND-48213',valor:4500,canal:'Marketplace A',nome:'Rafael M. Souza',sinais:['primeira','endereco'],itens:'1× Notebook 15" Core i7',pagto:'Cartão final 4821',entrega:'Rua das Palmeiras, 120 · Vitória/ES',cad:'Av. Principal, 845 · Serra/ES',compras:0,rec:'17:41',prazo:142},
+    {id:'ND-48220',valor:1890,canal:'Loja própria',nome:'Camila A. Ferreira',sinais:['endereco','curto','cartao'],itens:'2× Fone Bluetooth, 1× Smartwatch',pagto:'Cartão final 7730',entrega:'Rua do Sol, 77 · Linhares/ES',cad:'Rua das Flores, 310 · Colatina/ES',compras:2,rec:'17:55',prazo:38},
+    {id:'ND-48227',valor:7320,canal:'Marketplace B',nome:'Eduardo T. Lima',sinais:['primeira','endereco','cartao'],itens:'1× Smartphone 256 GB, 1× Notebook 14"',pagto:'Cartão final 0194',entrega:'Rua Beira-Mar, 33 · Guarapari/ES',cad:'Av. Central, 1020 · Cariacica/ES',compras:0,rec:'18:03',prazo:25},
+    {id:'ND-48231',valor:960,canal:'Marketplace C',nome:'Patrícia L. Nunes',sinais:['primeira','cartao'],itens:'1× Caixa de som portátil, 1× Carregador turbo',pagto:'Cartão final 5512',entrega:'Rua Nova, 18 · São Mateus/ES',cad:null,compras:0,rec:'16:48',prazo:276},
+    {id:'ND-48235',valor:2150,canal:'Marketplace A',nome:'Henrique B. Costa',sinais:['endereco','curto','horario'],itens:'1× Monitor 27"',pagto:'Cartão final 3308',entrega:'Av. Atlântica, 560 · Vila Velha/ES',cad:'Rua do Porto, 12 · Vila Velha/ES',compras:6,rec:'17:10',prazo:190},
+    {id:'ND-48240',valor:3480,canal:'Marketplace B',nome:'Larissa P. Rocha',sinais:['valor','curto','cartao'],itens:'1× Console de videogame, 2× Controle',pagto:'Cartão final 9087',entrega:'Rua Verde, 91 · Aracruz/ES',cad:null,compras:1,rec:'17:27',prazo:95},
+    {id:'ND-48244',valor:5900,canal:'Loja própria',nome:'Thiago N. Vieira',sinais:['valor','endereco'],itens:'3× Tablet 10"',pagto:'Cartão final 2246',entrega:'Rua do Comércio, 205 · Cachoeiro/ES',cad:'Rua Nova, 9 · Cachoeiro/ES',compras:4,rec:'17:49',prazo:52},
+    {id:'ND-48252',valor:820,canal:'Marketplace A',nome:'Bruno C. Matos',sinais:['primeira'],itens:'1× Teclado mecânico, 1× Mouse gamer',pagto:'Cartão final 6619',entrega:'Rua Aurora, 640 · Serra/ES',cad:null,compras:0,rec:'18:10',prazo:310}
   ];
   var CARLOS = {nome:'Carlos Henrique',id:'sup-carlos-henrique'};
   var ANA = {nome:'Ana Beatriz',id:'sup-ana-beatriz'};
   function yd(d,h,m){ var x=new Date(); x.setDate(x.getDate()-d); x.setHours(h,m,0,0); return x.toISOString(); }
   var SEED = [
-    {pedido:'ND-48190',valor:2780,canal:'Marketplace A',score:60,sinais:['hist','curto'],decisao:'rejeitar',motivo:'Fraude confirmada',justificativa:'Cliente com chargeback anterior e quatro compras em duas horas. Marketplace confirmou a contestação do cartão.',supervisor:CARLOS,ts:yd(1,21,14)},
-    {pedido:'ND-48184',valor:1350,canal:'Loja própria',score:35,sinais:['primeira','recus'],decisao:'liberar',motivo:null,justificativa:'Cliente confirmou a compra por telefone e o endereço bate com o comprovante enviado.',supervisor:ANA,ts:yd(1,18,40)},
-    {pedido:'ND-48177',valor:3900,canal:'Marketplace B',score:45,sinais:['diverg','curto','primeira'],decisao:'reter',motivo:null,justificativa:'Aguardando retorno do marketplace sobre o titular do cartão.',supervisor:CARLOS,ts:yd(1,15,5)},
-    {pedido:'ND-48162',valor:6100,canal:'Marketplace C',score:75,sinais:['hist','recus','primeira'],decisao:'rejeitar',motivo:'Dados inconsistentes',justificativa:'Três cartões recusados antes da aprovação e e-mail criado no mesmo dia da compra.',supervisor:ANA,ts:yd(1,11,32)},
-    {pedido:'ND-48151',valor:1020,canal:'Marketplace A',score:30,sinais:['recus','horario'],decisao:'liberar',motivo:null,justificativa:'Cliente recorrente. Horário incomum explicado, sem divergência de endereço.',supervisor:CARLOS,ts:yd(2,20,48)},
-    {pedido:'ND-48143',valor:2260,canal:'Marketplace B',score:40,sinais:['diverg','curto','horario'],decisao:'liberar',motivo:null,justificativa:'Endereço de entrega é de familiar, confirmado pelo cliente no chat.',supervisor:ANA,ts:yd(2,14,10)}
+    {pedido:'ND-48190',valor:2780,canal:'Marketplace A',score:60,sinais:['curto','endereco','cartao'],decisao:'rejeitar',motivo:'Fraude confirmada',justificativa:'Quatro compras em duas horas, com endereço diferente do cadastro e cartão novo. Marketplace confirmou a contestação do cartão.',supervisor:CARLOS,ts:yd(1,21,14)},
+    {pedido:'ND-48184',valor:1350,canal:'Loja própria',score:30,sinais:['valor','cartao','horario'],decisao:'liberar',motivo:null,justificativa:'Cliente confirmou a compra por telefone e o cartão novo é dele, conforme comprovante enviado.',supervisor:ANA,ts:yd(1,18,40)},
+    {pedido:'ND-48177',valor:3900,canal:'Marketplace B',score:45,sinais:['endereco','curto'],decisao:'reter',motivo:null,justificativa:'Aguardando retorno do marketplace sobre o titular do cartão.',supervisor:CARLOS,ts:yd(1,15,5)},
+    {pedido:'ND-48162',valor:6100,canal:'Marketplace C',score:80,sinais:['primeira','endereco','cartao'],decisao:'rejeitar',motivo:'Dados inconsistentes',justificativa:'Três cartões recusados antes da aprovação e e-mail criado no mesmo dia da compra.',supervisor:ANA,ts:yd(1,11,32)},
+    {pedido:'ND-48151',valor:1020,canal:'Marketplace A',score:30,sinais:['valor','cartao','horario'],decisao:'liberar',motivo:null,justificativa:'Cliente recorrente. Horário incomum explicado, cartão novo confirmado pelo cliente.',supervisor:CARLOS,ts:yd(2,20,48)},
+    {pedido:'ND-48143',valor:2260,canal:'Marketplace B',score:50,sinais:['endereco','curto','horario'],decisao:'liberar',motivo:null,justificativa:'Endereço de entrega é de familiar, confirmado pelo cliente no chat.',supervisor:ANA,ts:yd(2,14,10)}
   ];
-  var KEY='nd-antifraude-decisoes-v2';
+  var KEY='nd-antifraude-decisoes-v3';
   var T0=Date.now();
   function load(){ try{var r=localStorage.getItem(KEY);return r?JSON.parse(r):[];}catch(e){return [];} }
   function save(){ try{localStorage.setItem(KEY,JSON.stringify(decisions));}catch(e){} }
   var decisions=load();
-  var state={view:'login',sel:null,filter:'todos',sort:'risco',q:'',hfilter:'todas',hq:'',dtab:'resumo',dec:{opcao:null,motivo:null,texto:'',confirm:false},last:null,profile:false,rsim:{hist:false,recus:true,curto:false,diverg:true,primeira:true,horario:false}};
+  var state={view:'login',sel:null,filter:'todos',sort:'risco',q:'',hfilter:'todas',hq:'',dtab:'resumo',dec:{opcao:null,motivo:null,texto:'',confirm:false},last:null,profile:false,rsim:{primeira:true,endereco:true,curto:false,cartao:false,valor:false,horario:false}};
 
   /* ---------- utilidades ---------- */
   function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}

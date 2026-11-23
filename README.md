@@ -29,12 +29,14 @@ Telas complementares ligadas ao relatório:
 
 | Sinal | Peso |
 |---|---|
-| Histórico confirmado de fraude | +40 |
-| Múltiplas tentativas de pagamento recusadas | +25 |
+| Primeira compra com valor acima de R$ 800 | +40 |
+| Endereço de entrega diferente do cadastro | +25 |
 | Muitas compras em curto período | +20 |
-| Divergência relevante entre dados de entrega e pagamento | +15 |
-| Primeira compra com valor acima de R$ 800 | +10 |
+| Cartão diferente dos usados anteriormente | +15 |
+| Valor acima de R$ 800 | +10 |
 | Horário fora do padrão histórico do cliente | +5 |
+
+Fonte: Quadro 3 do relatório. A pontuação é a soma dos pesos, limitada a 100.
 
 | Pontuação | Faixa |
 |---|---|
