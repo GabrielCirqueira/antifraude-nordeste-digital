@@ -61,3 +61,14 @@ Não há bloqueio definitivo automático: a decisão final é sempre humana (LGP
 ## Tecnologias
 
 HTML, CSS e JavaScript puros, em um único arquivo (`index.html`).
+
+## Rotas do site
+
+| Rota | O que abre |
+|------|------------|
+| `/` | O protótipo do aplicativo do supervisor |
+| `/dashboard` | Painel com os links para o protótipo, os slides e o manual |
+| `/slides` | Os 11 slides da apresentação em tela cheia (setas, `F` tela cheia, `N` notas, `G` grade, `T` cronômetro; `/slides#9` abre direto no slide 9) |
+| `/manual` | O guia da apresentação, com a parte de cada integrante |
+
+Tudo é estático (cada rota é uma pasta com `index.html`). Na VPS, use o `nginx-exemplo.conf` como base. Na Vercel, o `vercel.json` já está pronto.

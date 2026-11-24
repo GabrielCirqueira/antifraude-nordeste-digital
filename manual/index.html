@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manual da apresentação · Nordeste Digital</title>
+<meta name="theme-color" content="#7B5CF5">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--brand:#7B5CF5;--brandS:#EFEBFF;--ink:#241F45;--muted:#716C94;--bg:#F7F6FD;--sh:0 10px 30px -12px rgba(80,60,160,.25);--f:'Plus Jakarta Sans',system-ui,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f)}
+header{position:sticky;top:0;z-index:5;background:rgba(247,246,253,.92);backdrop-filter:blur(10px);padding:12px 16px 10px;border-bottom:1px solid #E7E3F7}
+.row{display:flex;align-items:center;gap:10px;max-width:960px;margin:0 auto}
+.back{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:12px;background:#fff;box-shadow:var(--sh);color:var(--ink);text-decoration:none;font-weight:600;font-size:14px}
+h1{font-size:16px;margin:0;flex:1}
+.dl{height:40px;padding:0 14px;border-radius:12px;background:var(--brand);color:#fff;text-decoration:none;font-weight:600;font-size:14px;display:inline-flex;align-items:center}
+nav{display:flex;gap:8px;overflow-x:auto;max-width:960px;margin:10px auto 0;padding-bottom:2px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{flex:none;padding:8px 14px;border-radius:99px;background:#fff;color:var(--muted);text-decoration:none;font-weight:600;font-size:13.5px;box-shadow:var(--sh);border:2px solid transparent}
+nav a.on{background:var(--brandS);color:var(--brand);border-color:var(--brand)}
+main{max-width:960px;margin:0 auto;padding:18px 14px 60px}
+section{scroll-margin-top:120px;margin-bottom:34px}
+section>h2{font-size:20px;margin:0 0 4px}section>p{margin:0 0 14px;color:var(--muted);font-size:14.5px}
+.pg{display:block;width:100%;height:auto;border-radius:14px;background:#fff;box-shadow:var(--sh);margin-bottom:14px}
+.who{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:0 0 30px}
+</style></head><body>
+<header><div class="row">
+<a class="back" href="/dashboard">← Painel</a><h1>Manual da apresentação</h1>
+<a class="dl" href="/manual/Guia_Apresentacao_PBL_Nordeste_Digital.pdf" download>Baixar PDF</a></div>
+<nav id="nav"></nav></header>
+<main id="m"></main>
+<footer>ADS4techgroup · PBL Nordeste Digital · UNIVC 2026</footer>
+<script>
+(function(){
+var S=[
+['inicio','Entenda o caso','Parte 1: leia primeiro, mesmo sem conhecer o trabalho.','#7B5CF5',[1,2,3,4,5,6,7]],
+['ordem','Ordem e tempos','Quem fala em cada slide.','#7B5CF5',[8]],
+['miguel','Miguel','Slides 01 a 03 · Abertura, problema e teoria.','#E9B72B',[9,10]],
+['isaac','Isaac','Slides 04 e 05 · Diagnóstico e integração.','#3AA76D',[11,12,13]],
+['bruno','Bruno','Slides 06 e 07 · Antifraude e revisão humana.','#4FB7E6',[14,15,16]],
+['willyan','Willyan','Slides 08, 10 e 11 · Defesa, próximos passos e conclusão.','#3D6FE0',[17,18]],
+['cirqueira','Cirqueira','Slide 09 · Demonstração do protótipo.','#E86AA6',[19,20,21]],
+['checklist','Checklist do dia','Conferir antes de entrar.','#7B5CF5',[22]]];
+var nav=document.getElementById('nav'),m=document.getElementById('m');
+S.forEach(function(s){
+ var a=document.createElement('a');a.href='#'+s[0];a.textContent=s[1];a.dataset.id=s[0];nav.appendChild(a);
+ var h='<section id="'+s[0]+'"><h2><span class="who" style="background:'+s[3]+'"></span>'+s[1]+'</h2><p>'+s[2]+'</p>';
+ s[4].forEach(function(p){var n=('0'+p).slice(-2);h+='<img class="pg" loading="lazy" width="1105" height="1430" alt="'+s[1]+', página '+p+' do guia" src="/manual/img/p'+n+'.webp">';});
+ m.insertAdjacentHTML('beforeend',h+'</section>');
+});
+var secs=[].slice.call(document.querySelectorAll('section'));
+function spy(){var y=window.scrollY+150,c=secs[0].id;secs.forEach(function(s){if(s.offsetTop<=y)c=s.id;});
+ [].forEach.call(nav.children,function(a){var on=a.dataset.id===c;a.classList.toggle('on',on);if(on&&a.scrollIntoView){var r=a.getBoundingClientRect();if(r.left<0||r.right>innerWidth)nav.scrollTo({left:a.offsetLeft-20,behavior:'smooth'});}});}
+addEventListener('scroll',spy,{passive:true});spy();
+})();
+</script></body></html>

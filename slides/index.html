@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Slides · Nordeste Digital</title>
+<meta name="description" content="Slides da apresentação do PBL Nordeste Digital.">
+<meta name="theme-color" content="#14102B">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{color-scheme:dark;--bg:#14102B;--panel:#1D1840;--panel2:#272152;--ink:#F4F2FF;--muted:#A9A3D1;--brand:#9B83FA;--brand2:#7B5CF5;--lo:#4BD0A0;--mid:#F5B352;--hi:#F4759A;--f:'Plus Jakarta Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;--ease:cubic-bezier(.2,.8,.2,1)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--f);overflow:hidden}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid rgba(155,131,250,.7);outline-offset:2px;border-radius:12px}
+.app{height:100dvh;display:grid;grid-template-rows:auto 1fr auto;background:radial-gradient(60vmax 40vmax at 10% -10%,rgba(123,92,245,.28),transparent 60%),radial-gradient(50vmax 36vmax at 100% 110%,rgba(244,117,154,.14),transparent 60%),var(--bg)}
+.top{display:flex;align-items:center;gap:10px;padding:max(12px,env(safe-area-inset-top)) 16px 8px;transition:opacity .4s,transform .4s var(--ease)}
+.pill{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 14px;border-radius:14px;background:var(--panel);font-weight:600;font-size:13.5px;transition:background .2s,transform .15s var(--ease)}
+.pill:hover{background:var(--panel2)}.pill:active{transform:scale(.96)}
+.pill svg{flex:none}
+.ttl{flex:1;min-width:0;font-weight:700;font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px}
+.ttl b{color:var(--ink)}
+.timer{font-family:var(--mono);font-size:13.5px;gap:10px}
+.timer.warn{color:var(--mid)}.timer.over{color:var(--hi)}
+.timer i{width:8px;height:8px;border-radius:50%;background:var(--muted)}.timer.run i{background:var(--lo);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.3}}
+.stage{position:relative;min-height:0;display:grid;place-items:center;padding:6px 16px}
+.frame{position:relative;width:min(100%,calc((100dvh - 150px)*16/9));aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 30px 70px -20px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08)}
+.frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:scale(1.015);transition:opacity .45s var(--ease),transform .6s var(--ease)}
+.frame img.on{opacity:1;transform:none}
+.zone{position:absolute;top:0;bottom:0;z-index:2}.zone.l{left:0;width:30%;cursor:w-resize}.zone.r{right:0;width:70%;cursor:e-resize}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(29,24,64,.82);backdrop-filter:blur(6px);display:grid;place-items:center;z-index:3;transition:opacity .3s,transform .2s var(--ease),background .2s}
+.nav:hover{background:var(--brand2)}.nav:active{transform:translateY(-50%) scale(.92)}.nav[disabled]{opacity:.25;pointer-events:none}
+.nav.p{left:max(10px,calc(50% - min(100%,calc((100dvh - 150px)*16/9))/2 - 62px))}.nav.n{right:max(10px,calc(50% - min(100%,calc((100dvh - 150px)*16/9))/2 - 62px))}
+@media(max-width:800px){.nav{display:none}}
+.bottom{padding:8px 16px max(14px,env(safe-area-inset-bottom));display:grid;gap:10px;transition:opacity .4s,transform .4s var(--ease)}
+.prog{height:6px;border-radius:99px;background:var(--panel);overflow:hidden;cursor:pointer}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:99px;transition:width .45s var(--ease)}
+.bar{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.cnt{font-family:var(--mono);font-size:14px;min-width:78px;text-align:center}
+.bar .pill.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 12px 24px -12px rgba(123,92,245,.9)}
+.hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(29,24,64,.92);padding:10px 16px;border-radius:99px;font-size:12.5px;color:var(--muted);white-space:nowrap;animation:hint 7s forwards;z-index:4;pointer-events:none}
+.hint b{color:var(--ink);font-family:var(--mono);font-weight:500}
+@keyframes hint{0%,85%{opacity:1}100%{opacity:0}}
+.idle .top{opacity:0;transform:translateY(-20px);pointer-events:none}.idle .bottom{opacity:0;transform:translateY(20px);pointer-events:none}.idle .nav{opacity:0}.idle{cursor:none}
+.notes{position:fixed;z-index:20;right:16px;top:70px;bottom:96px;width:min(400px,calc(100vw - 32px));background:var(--panel);border-radius:24px;box-shadow:0 30px 60px -20px rgba(0,0,0,.7);display:flex;flex-direction:column;transform:translateX(calc(100% + 30px));opacity:0;transition:transform .45s var(--ease),opacity .3s}
+.notes.on{transform:none;opacity:1}
+.notes header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;font-weight:700}
+.notes header small{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-top:2px;font-family:var(--mono)}
+.notes .body{overflow:auto;padding:4px 20px 22px;font-size:16px;line-height:1.65;white-space:pre-wrap;color:#E7E3FF}
+.notes .x{width:38px;height:38px;border-radius:12px;background:var(--panel2);display:grid;place-items:center}
+@media(max-width:800px){.notes{left:0;right:0;top:auto;bottom:0;width:auto;max-height:62dvh;border-radius:26px 26px 0 0;transform:translateY(105%)}.notes.on{transform:none}}
+.grid{position:fixed;inset:0;z-index:30;background:rgba(20,16,43,.96);backdrop-filter:blur(8px);overflow:auto;padding:max(18px,env(safe-area-inset-top)) 18px 24px;display:none}
+.grid.on{display:block;animation:fade .25s both}
+@keyframes fade{from{opacity:0}}
+.grid h2{margin:0 0 14px;font-size:18px;display:flex;justify-content:space-between;align-items:center}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.th{position:relative;border-radius:14px;overflow:hidden;background:#fff;aspect-ratio:16/9;box-shadow:0 0 0 2px transparent;transition:transform .25s var(--ease),box-shadow .2s}
+.th:hover{transform:translateY(-3px)}.th.cur{box-shadow:0 0 0 3px var(--brand)}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.th span{position:absolute;left:8px;bottom:8px;background:rgba(20,16,43,.85);font:500 12px var(--mono);padding:3px 8px;border-radius:99px}
+@media(prefers-reduced-motion:reduce){*{transition-duration:.001ms!important;animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="top" id="top">
+    <a class="pill" href="/dashboard" aria-label="Voltar ao painel de apresentação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>Painel</a>
+    <div class="ttl" id="ttl"></div>
+    <button class="pill timer" id="timer" aria-label="Cronômetro: clique para iniciar ou pausar"><i></i><span id="tt">00:00</span><span style="color:var(--muted)">/ 10:00</span></button>
+    <button class="pill" id="bNotes" aria-label="Mostrar ou ocultar as notas do apresentador" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/></svg><span class="lbl">Notas</span></button>
+  </div>
+  <div class="stage" id="stage">
+    <div class="frame" id="frame"><div class="zone l" id="zl"></div><div class="zone r" id="zr"></div></div>
+    <button class="nav p" id="bp" aria-label="Slide anterior"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
+    <button class="nav n" id="bn" aria-label="Próximo slide"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+    <div class="hint" id="hint"><b>←</b> <b>→</b> navegar · <b>F</b> tela cheia · <b>N</b> notas · <b>G</b> todos os slides · <b>T</b> cronômetro</div>
+  </div>
+  <div class="bottom" id="bottom">
+    <div class="prog" id="prog" role="progressbar" aria-label="Progresso da apresentação" aria-valuemin="1" aria-valuemax="11"><i id="pbar"></i></div>
+    <div class="bar">
+      <button class="pill" id="bg" aria-label="Ver todos os slides"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>Slides</button>
+      <button class="pill" id="bp2" aria-label="Slide anterior">Voltar</button>
+      <span class="cnt" id="cnt" aria-live="polite">1 / 11</span>
+      <button class="pill primary" id="bn2" aria-label="Próximo slide">Próximo</button>
+      <button class="pill" id="bf" aria-label="Tela cheia"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button>
+    </div>
+  </div>
+</div>
+<aside class="notes" id="notes" aria-label="Notas do apresentador"><header><div><span id="nt">Notas</span><small id="nm"></small></div><button class="x" id="nx" aria-label="Fechar notas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header><div class="body" id="nb"></div></aside>
+<div class="grid" id="grid"><h2>Todos os slides <button class="pill" id="gx">Fechar</button></h2><div class="thumbs" id="thumbs"></div></div>
+<script type="application/json" id="data">[{"t": "Abertura", "n": "0:00 a 0:20\nBoa noite. Somos o ADS4techgroup, do quarto período noturno de ADS. [Apresentar os integrantes.] Nosso PBL analisa como a Nordeste Digital integra pedidos de vários canais de venda e como poderia lidar com pedidos suspeitos de fraude.\nFonte: relatório do ADS4techgroup, capa."}, {"t": "Problema inicial", "n": "0:20 a 1:10\nA Nordeste Digital vende na loja própria e em três marketplaces. São 4.800 pedidos por mês, e os sistemas trocam informações por meio de APIs. Ao longo de um ano, o caso registrou 31 horas de indisponibilidade ligadas à instabilidade dos parceiros e 14 pedidos duplicados a cada mil.\nNo antifraude, 8,4% dos pedidos eram bloqueados por suspeita. A empresa não sabia quantos bloqueios tinham atingido compras legítimas. Em 12 meses, perdeu R$ 214 mil com chargebacks, que são estornos de pagamentos contestados.\nFonte: caso PBL da UNIVC, ADS-4, Grupo 3, tabela de dados brutos."}, {"t": "Fundamentação teórica", "n": "1:10 a 1:50\nA fundamentação liga três ideias ao caso. Na integração, o circuit breaker, descrito por Martin Fowler, ajuda a isolar uma API instável. O trabalho de Marc Brooker sobre retentativas explica por que vale espaçar e variar a espera antes de repetir chamadas. A idempotência orienta como repetir uma operação sem gerar outro pedido.\nNo antifraude, usamos a ideia de que os erros têm custos diferentes, discutida por Charles Elkan. Para a revisão dos pedidos, consideramos também o artigo 20 da LGPD e a necessidade de registrar os critérios usados na decisão.\nReferências: Martin Fowler, CircuitBreaker (2014), martinfowler.com/bliki/CircuitBreaker.html. Marc Brooker, Exponential Backoff and Jitter (2015), aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/. Jena e Dalal, The Idempotency-Key HTTP Header Field (Internet-Draft, 2025). Charles Elkan, The Foundations of Cost-Sensitive Learning (2001). Lei nº 13.709/2018, art. 20."}, {"t": "Diagnóstico", "n": "1:50 a 2:40\nO problema da integração começa quando a API demora e a solicitação fica esperando sem um tempo limite. Quando a chamada dá erro, o sistema repete o envio imediatamente. Isso ocupa recursos compartilhados e atrasa os pedidos de outros canais.\nHá outro risco. O parceiro pode ter registrado o pedido, mas a conexão cair antes de a confirmação chegar. Se a nova tentativa for interpretada como um novo pedido, a compra pode ser despachada em dobro.\nNo antifraude, a regra de bloquear primeiras compras de alto valor podia atingir clientes legítimos. A falta de um histórico das decisões dificultava explicar bloqueios e medir o desempenho da regra.\nFontes: caso PBL da UNIVC e relatório do ADS4techgroup."}, {"t": "Proposta de integração", "n": "2:40 a 4:10\nNossa proposta começa pelo timeout, um tempo máximo para cada chamada à API. Se houver timeout ou um erro temporário, o sistema faz um número limitado de novas tentativas. A espera entre elas cresce e varia um pouco. Se essas falhas se acumularem, o circuit breaker suspende as chamadas para aquela API. Depois de um intervalo, libera uma chamada de teste para verificar se pode retomar. Cada integração tem recursos próprios e um limite de chamadas por minuto, para proteger os demais canais.\nAntes do primeiro envio, o sistema da Nordeste Digital gera e guarda uma chave de idempotência. É um código que identifica aquela operação. Se precisar reenviar o pedido, usa a mesma chave. Quando a API do marketplace oferece esse recurso e reconhece a operação já processada, devolve o resultado anterior sem duplicar o registro.\nPor fim, cada marketplace tem um adaptador de API. Ele converte campos como order_id ou pedidoId para o formato interno da empresa. Se um campo obrigatório mudar, o sistema registra o erro e separa o pedido para tratamento.\nFonte: relatório do ADS4techgroup, seções 3.1–3.3."}, {"t": "Proposta de antifraude", "n": "4:10 a 4:55\nEm vez de depender só do valor da compra, a proposta combina sinais com pesos diferentes. Pela tabela do relatório, uma primeira compra acima de R$ 800 soma 40 pontos. Se o endereço de entrega também for diferente do cadastro, são mais 25. Só esses dois sinais já somam 65 pontos.\nAté 29 pontos, o pedido é aprovado automaticamente. De 30 a 59, fica retido para revisão. A partir de 60, fica bloqueado provisoriamente e também passa por revisão. A rejeição definitiva cabe ao supervisor.\nFonte: relatório do ADS4techgroup, seção 3.4 e Quadro 3."}, {"t": "Proposta de revisão humana", "n": "4:55 a 5:55\nNa tela do celular, o supervisor veria sem rolar o número do pedido, o valor, a pontuação, o prazo e os sinais principais. Nos detalhes, ele verifica o contexto, decide se libera, mantém retido ou rejeita e registra a justificativa. O histórico guarda a decisão, quem tomou e quais sinais pesaram na análise.\nO artigo 20 da LGPD prevê o direito de solicitar revisão de uma decisão que afete os interesses da pessoa e tenha sido tomada exclusivamente com base em tratamento automatizado de dados pessoais. Na nossa proposta, o atendimento recebe o pedido de revisão e consulta o histórico. Propomos até cinco dias úteis para responder ao cliente. O prazo interno de análise do pedido seria definido pela empresa.\nFontes: relatório do ADS4techgroup, seções 3.5–3.7. Lei nº 13.709/2018, art. 20."}, {"t": "Defesa da solução", "n": "5:55 a 6:45\nO isolamento por parceiro responde ao risco de uma API travar os outros canais. A chave de idempotência responde ao risco de duplicar pedidos quando a confirmação falha. Na revisão humana, o motivo fica registrado para explicar a decisão. O protótipo permite demonstrar esses fluxos em um cenário simulado.\nBloquear uma compra legítima é um falso positivo, com custo estimado de R$ 15. Aprovar uma fraude é um falso negativo, estimado em R$ 413. Num piloto, seria preciso comparar as decisões com o desfecho verificado de pedidos aprovados e barrados. Assim poderíamos avaliar os dois erros e ajustar os pesos e as faixas.\nFonte: relatório do ADS4techgroup, seção 3.4. Os valores são estimativas e os impactos são esperados."}, {"t": "Demonstração do protótipo", "n": "6:45 a 8:35\n[Cirqueira. Deixe o slide projetado enquanto abre o protótipo. Mostre um pedido retido, os sinais de risco, a justificativa da decisão e o registro no Histórico. Depois, simule a falha do Marketplace B e mostre o circuito aberto só para ele. Os demais parceiros seguem operando na simulação.]\nA tabela anterior traz os pesos da proposta do relatório. Aqui na tela, usamos os valores desta versão do protótipo. O que estamos mostrando é como revisar e registrar uma decisão e como acompanhar uma falha isolada de integração.\nCódigo do protótipo: https://github.com/GabrielCirqueira/antifraude-nordeste-digital"}, {"t": "Próximos passos", "n": "8:35 a 9:25\nSe a empresa decidisse implantar a solução, recriaríamos as telas em React Native com TypeScript, como aplicativo instalável para Android e iOS. O app usaria uma API em Python com FastAPI para processar pedidos, calcular risco e verificar permissões. O PostgreSQL guardaria a fila, os pedidos e o histórico das decisões, incluindo os sinais e a versão das regras.\nOs dados exibidos seriam limitados ao necessário e o acesso seria individual. A empresa definiria a finalidade, a base legal e o prazo de guarda para cada uso de dados. Um piloto com um marketplace permitiria testar a integração e medir os resultados antes de ampliar o uso.\nFonte: proposta de implementação do roteiro. LGPD, arts. 6º e 46."}, {"t": "Conclusão", "n": "9:25 a 9:50\nNeste PBL, partimos de dois problemas e chegamos a uma proposta para isolar falhas entre canais e revisar pedidos suspeitos com justificativa. O protótipo nos permitiu demonstrar esse fluxo. A LGPD orientou o desenho da revisão e do histórico, para que a empresa possa explicar as decisões e responder aos pedidos de revisão. Obrigado pela atenção."}]</script>
+<script>
+(function(){
+'use strict';
+var S=JSON.parse(document.getElementById('data').textContent),N=S.length,cur=0;
+var $=function(i){return document.getElementById(i)};
+var frame=$('frame'),imgs=[];
+function src(i){return '/slides/img/slide-'+String(i+1).padStart(2,'0')+'.webp';}
+S.forEach(function(s,i){var im=new Image();im.alt='Slide '+(i+1)+': '+s.t;im.decoding='async';if(i<2)im.src=src(i);else im.setAttribute('data-src',src(i));frame.insertBefore(im,frame.firstChild);imgs[i]=im;});
+imgs.reverse();
+function ensure(i){var im=imgs[i];if(im&&!im.src&&im.getAttribute('data-src'))im.src=im.getAttribute('data-src');}
+function show(i,noHash){
+  i=Math.max(0,Math.min(N-1,i));cur=i;ensure(i);ensure(i+1);ensure(i-1);
+  imgs.forEach(function(im,k){im.classList.toggle('on',k===i);});
+  $('cnt').textContent=(i+1)+' / '+N;$('pbar').style.width=((i+1)/N*100)+'%';$('prog').setAttribute('aria-valuenow',i+1);
+  $('ttl').innerHTML='<b>'+(i+1)+'.</b> '+S[i].t;
+  $('bp').disabled=i===0;$('bn').disabled=i===N-1;
+  var lines=S[i].n.split('\n'),first=lines[0];var hasTime=/^\d+:\d\d\s*a\s*\d+:\d\d$/.test(first);
+  $('nt').textContent='Slide '+(i+1)+' · '+S[i].t;$('nm').textContent=hasTime?first:'';$('nb').textContent=(hasTime?lines.slice(1):lines).join('\n').trim()||'Sem notas neste slide.';
+  if(!noHash)history.replaceState(null,'','#'+(i+1));
+  [].forEach.call(document.querySelectorAll('.th'),function(t,k){t.classList.toggle('cur',k===i);});
+}
+function next(){show(cur+1);}function prev(){show(cur-1);}
+$('bn').onclick=$('bn2').onclick=next;$('bp').onclick=$('bp2').onclick=prev;
+$('zr').onclick=next;$('zl').onclick=prev;
+$('prog').onclick=function(e){var r=this.getBoundingClientRect();show(Math.floor((e.clientX-r.left)/r.width*N));};
+function toggleNotes(f){var on=f===undefined?!$('notes').classList.contains('on'):f;$('notes').classList.toggle('on',on);$('bNotes').setAttribute('aria-pressed',String(on));}
+$('bNotes').onclick=function(){toggleNotes();};$('nx').onclick=function(){toggleNotes(false);};
+function toggleGrid(f){var g=$('grid'),on=f===undefined?!g.classList.contains('on'):f;g.classList.toggle('on',on);}
+$('bg').onclick=function(){toggleGrid(true);};$('gx').onclick=function(){toggleGrid(false);};
+S.forEach(function(s,i){var b=document.createElement('button');b.className='th';b.setAttribute('aria-label','Ir para o slide '+(i+1)+': '+s.t);b.innerHTML='<img loading="lazy" alt="" src="'+src(i)+'"><span>'+(i+1)+'</span>';b.onclick=function(){show(i);toggleGrid(false);};$('thumbs').appendChild(b);});
+function fs(){var d=document;if(!d.fullscreenElement){(d.documentElement.requestFullscreen||d.documentElement.webkitRequestFullscreen||function(){}).call(d.documentElement);}else{(d.exitFullscreen||d.webkitExitFullscreen).call(d);}}
+$('bf').onclick=fs;
+/* cronômetro */
+var t0=0,acc=0,run=false;
+function fmt(ms){var s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function paint(){var ms=acc+(run?Date.now()-t0:0),b=$('timer');$('tt').textContent=fmt(ms);b.classList.toggle('run',run);b.classList.toggle('warn',ms>=540000&&ms<600000);b.classList.toggle('over',ms>=600000);}
+function timerToggle(){if(run){acc+=Date.now()-t0;run=false;}else{t0=Date.now();run=true;}paint();}
+$('timer').onclick=timerToggle;$('timer').oncontextmenu=function(e){e.preventDefault();acc=0;run=false;paint();};
+setInterval(paint,500);
+/* teclado */
+document.addEventListener('keydown',function(e){
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  var k=e.key;
+  if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Enter'){e.preventDefault();next();}
+  else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();prev();}
+  else if(k==='Home'){show(0);}else if(k==='End'){show(N-1);}
+  else if(k==='f'||k==='F'){fs();}
+  else if(k==='n'||k==='N'){toggleNotes();}
+  else if(k==='g'||k==='G'){toggleGrid();}
+  else if(k==='t'||k==='T'){timerToggle();}
+  else if(k==='Escape'){toggleGrid(false);toggleNotes(false);}
+  else if(/^[1-9]$/.test(k)){show(Number(k)-1);}
+});
+/* gesto de arrastar */
+var sx=null,sy=null;
+$('stage').addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+$('stage').addEventListener('touchend',function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5){dx<0?next():prev();}},{passive:true});
+/* esconde os controles quando parado, em tela cheia */
+var idleT;function wake(){$('app').classList.remove('idle');clearTimeout(idleT);if(document.fullscreenElement)idleT=setTimeout(function(){$('app').classList.add('idle');},3000);}
+['mousemove','mousedown','touchstart','keydown'].forEach(function(ev){document.addEventListener(ev,wake,{passive:true});});
+document.addEventListener('fullscreenchange',wake);
+window.addEventListener('hashchange',function(){var n=parseInt(location.hash.slice(1),10);if(n>=1&&n<=N)show(n-1,true);});
+var h=parseInt(location.hash.slice(1),10);show(h>=1&&h<=N?h-1:0,true);
+})();
+</script>
+</body>
+</html>
