@@ -13,17 +13,22 @@ No computador, o app aparece dentro de uma moldura de celular, com um guia de te
 
 ## O que o protótipo mostra
 
+O visual é um flat suave (fundo branco, cards com sombra leve, ícones gráficos e animações). Os dados são todos fictícios e gerados na hora.
+
 Telas do Guia do Aplicativo:
 
-1. **Painel inicial:** fila de pedidos que precisam de análise, com número, valor, canal, nível de risco, situação e prazo. Tem busca, filtros e ordenação.
-2. **Detalhes do pedido:** medidor de risco de 0 a 100, sinais que geraram o alerta (com pesos), dados do pedido, comparação de endereços e linha do tempo.
-3. **Decisão:** liberar, manter retido ou rejeitar, com justificativa obrigatória, motivo para rejeição e confirmação antes de salvar.
-4. **Histórico:** decisões já registradas (quem, quando, decisão e justificativa), com registro de auditoria em JSON.
+1. **Painel inicial:** fila de revisão **ao vivo**. Novos pedidos chegam sozinhos, em intervalos variados, com nomes, produtos, endereços e cartões aleatórios. O motor calcula a pontuação a partir dos dados do pedido. Pedidos de baixo risco são aprovados automaticamente e os demais entram na fila com prazo de análise.
+2. **Detalhes do pedido:** medidor de risco de 0 a 100, sinais ativados (com pesos), dados do pedido, comparação de endereços, comportamento do cliente e linha do tempo.
+3. **Decisão:** liberar, manter retido ou rejeitar, com justificativa obrigatória, motivo para rejeição e confirmação antes de salvar. Gera protocolo de auditoria.
+4. **Histórico:** decisões registradas (quem, quando, decisão e justificativa), com registro de auditoria em JSON.
 
 Telas complementares ligadas ao relatório:
 
-- **Integração:** parceiros A, B e C com os parâmetros de resiliência (timeout, retentativa com jitter, circuit breaker, bulkhead e rate limit). O botão "Simular falha" mostra o circuito abrindo só no parceiro afetado, o enfileiramento de pedidos e o reprocessamento com a mesma chave de idempotência.
-- **Regras:** simulador de pontuação do motor antifraude (sinais, pesos e faixas de decisão), ajuste do peso de cada sinal pela empresa (com botão para restaurar os pesos do relatório), custo assimétrico do erro e resumo de conformidade com a LGPD.
+- **Parceiros:** os três marketplaces com timeout, tentativas, circuit breaker e bulkhead. Quando o circuito de um parceiro abre, os pedidos dele esperam na fila de reprocessamento e entram depois, sem duplicar.
+- **Regras:** simulador de pontuação, peso de cada sinal, faixas de decisão e como cada sinal é detectado (valor considerado alto, histórico mínimo, janela de compras em sequência). Tudo editável.
+- **Ajustes:** liga e desliga o fluxo de pedidos, define o intervalo entre pedidos e a chance de pedido suspeito, os prazos de análise, a instabilidade aleatória dos parceiros e restaura os dados.
+
+Tudo que é configurado fica salvo no navegador (`localStorage`) e muda o resultado das análises na hora.
 
 ## Regras do motor antifraude (do relatório)
 
@@ -51,7 +56,7 @@ Não há bloqueio definitivo automático: a decisão final é sempre humana (LGP
 - É um protótipo: não há back-end, API ou banco de dados reais. O motor antifraude, a fila e a integração com os parceiros são simulados no navegador.
 - As decisões registradas ficam salvas apenas no navegador de quem usa (`localStorage`).
 - Todos os pedidos, nomes, valores e endereços são fictícios.
-- Os prazos de decisão recomeçam a cada vez que a página é aberta.
+- Os pedidos retidos na fila de um parceiro com o circuito aberto ficam só na memória e se perdem ao recarregar a página.
 
 ## Tecnologias
 
