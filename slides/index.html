@@ -8,13 +8,13 @@
 <meta name="theme-color" content="#14102B">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
-:root{color-scheme:dark;--bg:#14102B;--panel:#1D1840;--panel2:#272152;--ink:#F4F2FF;--muted:#A9A3D1;--brand:#9B83FA;--brand2:#7B5CF5;--lo:#4BD0A0;--mid:#F5B352;--hi:#F4759A;--f:'Plus Jakarta Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;--ease:cubic-bezier(.2,.8,.2,1)}
+:root{color-scheme:light;--bg:#fff;--panel:#1D1840;--panel2:#272152;--ink:#F4F2FF;--muted:#A9A3D1;--brand:#9B83FA;--brand2:#7B5CF5;--lo:#4BD0A0;--mid:#F5B352;--hi:#F4759A;--f:'Plus Jakarta Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;--ease:cubic-bezier(.2,.8,.2,1)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--f);overflow:hidden}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
 a{color:inherit;text-decoration:none}
 :focus-visible{outline:3px solid rgba(155,131,250,.7);outline-offset:2px;border-radius:12px}
-.app{height:100dvh;display:grid;grid-template-rows:auto 1fr auto;background:radial-gradient(60vmax 40vmax at 10% -10%,rgba(123,92,245,.28),transparent 60%),radial-gradient(50vmax 36vmax at 100% 110%,rgba(244,117,154,.14),transparent 60%),var(--bg)}
+.app{position:fixed;inset:0;background:#fff}
 .top{display:flex;align-items:center;gap:10px;padding:max(12px,env(safe-area-inset-top)) 16px 8px;transition:opacity .4s,transform .4s var(--ease)}
 .pill{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 14px;border-radius:14px;background:var(--panel);font-weight:600;font-size:13.5px;transition:background .2s,transform .15s var(--ease)}
 .pill:hover{background:var(--panel2)}.pill:active{transform:scale(.96)}
@@ -25,8 +25,8 @@ a{color:inherit;text-decoration:none}
 .timer.warn{color:var(--mid)}.timer.over{color:var(--hi)}
 .timer i{width:8px;height:8px;border-radius:50%;background:var(--muted)}.timer.run i{background:var(--lo);animation:blink 1.4s infinite}
 @keyframes blink{50%{opacity:.3}}
-.stage{position:relative;min-height:0;display:grid;place-items:center;padding:6px 16px}
-.frame{position:relative;width:min(100%,calc((100dvh - 150px)*16/9));aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 30px 70px -20px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08)}
+.stage{position:absolute;inset:0}
+.frame{position:absolute;inset:0;background:#fff}
 .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:scale(1.015);transition:opacity .45s var(--ease),transform .6s var(--ease)}
 .frame img.on{opacity:1;transform:none}
 .zone{position:absolute;top:0;bottom:0;z-index:2}.zone.l{left:0;width:30%;cursor:w-resize}.zone.r{right:0;width:70%;cursor:e-resize}
@@ -61,7 +61,7 @@ a{color:inherit;text-decoration:none}
 .th img{width:100%;height:100%;object-fit:cover;display:block}
 .th span{position:absolute;left:8px;bottom:8px;background:rgba(20,16,43,.85);font:500 12px var(--mono);padding:3px 8px;border-radius:99px}
 @media(prefers-reduced-motion:reduce){*{transition-duration:.001ms!important;animation-duration:.001ms!important}}
-</style>
+#top,#bottom,.nav,.hint{display:none}.ui #top,.ui #bottom{display:flex}.ui #bottom{display:grid}.ui .nav{display:grid}.app.ui{background:#14102B}.app.ui .frame{inset:70px 16px 110px}.app{cursor:default}body{background:#fff}.idle{cursor:none}</style>
 </head>
 <body>
 <div class="app" id="app">
@@ -75,7 +75,7 @@ a{color:inherit;text-decoration:none}
     <div class="frame" id="frame"><div class="zone l" id="zl"></div><div class="zone r" id="zr"></div></div>
     <button class="nav p" id="bp" aria-label="Slide anterior"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
     <button class="nav n" id="bn" aria-label="Próximo slide"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
-    <div class="hint" id="hint"><b>←</b> <b>→</b> navegar · <b>F</b> tela cheia · <b>N</b> notas · <b>G</b> todos os slides · <b>T</b> cronômetro</div>
+    <div class="hint" id="hint" hidden><b>←</b> <b>→</b> navegar · <b>F</b> tela cheia · <b>N</b> notas · <b>G</b> todos os slides · <b>T</b> cronômetro</div>
   </div>
   <div class="bottom" id="bottom">
     <div class="prog" id="prog" role="progressbar" aria-label="Progresso da apresentação" aria-valuemin="1" aria-valuemax="11"><i id="pbar"></i></div>
@@ -99,7 +99,6 @@ var $=function(i){return document.getElementById(i)};
 var frame=$('frame'),imgs=[];
 function src(i){return '/slides/img/slide-'+String(i+1).padStart(2,'0')+'.webp';}
 S.forEach(function(s,i){var im=new Image();im.alt='Slide '+(i+1)+': '+s.t;im.decoding='async';if(i<2)im.src=src(i);else im.setAttribute('data-src',src(i));frame.insertBefore(im,frame.firstChild);imgs[i]=im;});
-imgs.reverse();
 function ensure(i){var im=imgs[i];if(im&&!im.src&&im.getAttribute('data-src'))im.src=im.getAttribute('data-src');}
 function show(i,noHash){
   i=Math.max(0,Math.min(N-1,i));cur=i;ensure(i);ensure(i+1);ensure(i-1);
@@ -141,9 +140,13 @@ document.addEventListener('keydown',function(e){
   else if(k==='n'||k==='N'){toggleNotes();}
   else if(k==='g'||k==='G'){toggleGrid();}
   else if(k==='t'||k==='T'){timerToggle();}
+  else if(k==='c'||k==='C'){$('app').classList.toggle('ui');}
   else if(k==='Escape'){toggleGrid(false);toggleNotes(false);}
   else if(/^[1-9]$/.test(k)){show(Number(k)-1);}
 });
+/* primeira interação: entra em tela cheia */
+var did=false;function auto(){if(did)return;did=true;try{if(!document.fullscreenElement){var e=document.documentElement;(e.requestFullscreen||e.webkitRequestFullscreen||function(){}).call(e);}}catch(x){}}
+document.addEventListener('pointerdown',auto,{once:true});document.addEventListener('keydown',auto,{once:true});
 /* gesto de arrastar */
 var sx=null,sy=null;
 $('stage').addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
