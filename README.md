@@ -23,7 +23,7 @@ Telas do Guia do Aplicativo:
 Telas complementares ligadas ao relatório:
 
 - **Integração:** parceiros A, B e C com os parâmetros de resiliência (timeout, retentativa com jitter, circuit breaker, bulkhead e rate limit). O botão "Simular falha" mostra o circuito abrindo só no parceiro afetado, o enfileiramento de pedidos e o reprocessamento com a mesma chave de idempotência.
-- **Regras:** simulador de pontuação do motor antifraude (sinais, pesos e faixas de decisão), custo assimétrico do erro e resumo de conformidade com a LGPD.
+- **Regras:** simulador de pontuação do motor antifraude (sinais, pesos e faixas de decisão), ajuste do peso de cada sinal pela empresa (com botão para restaurar os pesos do relatório), custo assimétrico do erro e resumo de conformidade com a LGPD.
 
 ## Regras do motor antifraude (do relatório)
 

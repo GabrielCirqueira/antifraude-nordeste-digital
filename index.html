@@ -304,6 +304,14 @@ pre{margin:4px 0 0;padding:12px;border-radius:12px;background:var(--surface-2);f
 .sw input:checked + .tg2::after{transform:translateX(18px)}
 .sw input:focus-visible + .tg2{outline:2px solid var(--brand);outline-offset:2px}
 .sw .wt{font-family:var(--f-mono);color:var(--brand);font-weight:500;font-size:13px}
+.wrow{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.wrow:first-of-type{border-top:0}
+.wrow span{font-weight:500;font-size:14px}.wrow small{grid-column:1;color:var(--muted);font-size:12px}
+.wst{grid-column:2;grid-row:1/3;display:flex;align-items:center;gap:6px}
+.wst button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 20px/1 var(--f-body);cursor:pointer}
+.wst button:disabled{opacity:.35;cursor:default}
+.wst output{min-width:44px;text-align:center;font:500 16px var(--f-mono);color:var(--brand)}
+.wrow.chg output{color:var(--ink);font-weight:700}
 .band3{display:grid;gap:8px}
 .band3 div{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:10px 12px;border-radius:14px}
 .band3 b{font-family:var(--f-mono);font-size:13px;white-space:nowrap}
@@ -367,6 +375,12 @@ pre{margin:4px 0 0;padding:12px;border-radius:12px;background:var(--surface-2);f
     horario: {label:'Horário fora do padrão histórico do cliente', short:'Horário atípico', w:5, why:'Acesso em horário incomum'}
   };
   var SKEYS = ['primeira','endereco','curto','cartao','valor','horario'];
+  var DEFW = {}; SKEYS.forEach(function(k){DEFW[k]=SIGNALS[k].w;});
+  var WKEY = 'nd-antifraude-pesos-v1';
+  (function(){try{var r=JSON.parse(localStorage.getItem(WKEY)||'null');if(r)SKEYS.forEach(function(k){var n=Number(r[k]);if(r[k]!=null&&isFinite(n)&&n>=0&&n<=60)SIGNALS[k].w=Math.round(n);});}catch(e){}})();
+  function saveW(){try{var o={};SKEYS.forEach(function(k){o[k]=SIGNALS[k].w;});localStorage.setItem(WKEY,JSON.stringify(o));}catch(e){}}
+  function wChanged(){return SKEYS.some(function(k){return SIGNALS[k].w!==DEFW[k];});}
+  function maxW(){var m=40;SKEYS.forEach(function(k){if(SIGNALS[k].w>m)m=SIGNALS[k].w;});return m;}
   var CANAL = {'Marketplace A':'#5B6EE1','Marketplace B':'#1FA2B8','Marketplace C':'#C95FA3','Loja própria':'#6B8E23'};
   var SUP = {nome:'Ana Beatriz',id:'sup-ana-beatriz',ini:'AB'};
   var MOTIVOS = ['Fraude confirmada','Dados inconsistentes','Titular não reconhece a compra','Outro'];
@@ -626,7 +640,7 @@ pre{margin:4px 0 0;padding:12px;border-radius:12px;background:var(--surface-2);f
     }else if(state.dtab==='sinais'){
       var rows=SKEYS.slice().sort(function(a,b){var ia=o.sinais.indexOf(a)>=0?1:0,ib=o.sinais.indexOf(b)>=0?1:0;return ib-ia||SIGNALS[b].w-SIGNALS[a].w;}).map(function(k){
         var on=o.sinais.indexOf(k)>=0,g=SIGNALS[k];
-        return '<div class="sg'+(on?'':' off')+'"><span class="lb">'+g.label+'</span><span class="w">'+(on?'+'+g.w:'0')+'</span><span class="why">'+(on?g.why:'Não acionado neste pedido')+'</span><span class="bar"><i style="width:'+(on?g.w/40*100:0)+'%"></i></span></div>';
+        return '<div class="sg'+(on?'':' off')+'"><span class="lb">'+g.label+'</span><span class="w">'+(on?'+'+g.w:'0')+'</span><span class="why">'+(on?g.why:'Não acionado neste pedido')+'</span><span class="bar"><i style="width:'+(on?g.w/maxW()*100:0)+'%"></i></span></div>';
       }).join('');
       body='<section class="card"><h2>Por que foi sinalizado</h2>'+rows+'<div class="total"><span>Pontuação total</span><span class="mono" style="color:var(--'+bandKey(s)+')">'+s+' / 100</span></div></section>'+
         '<p class="note">A pontuação é a soma dos pesos. Os sinais não provam fraude: indicam que o pedido precisa de análise humana.</p>';
@@ -702,7 +716,7 @@ pre{margin:4px 0 0;padding:12px;border-radius:12px;background:var(--surface-2);f
     shown.forEach(function(r){
       var lb=dayLabel(r.ts);if(lb!==last){out+='<div class="day">'+lb+'</div>';last=lb;}
       var c=OPCOES[r.decisao];
-      var audit={protocolo:proto(r.ts),id_pedido:r.pedido,timestamp:r.ts,sinais_ativados:r.sinais.map(function(k){return {sinal:SIGNALS[k].label,peso:SIGNALS[k].w};}),pontuacao_total:r.score,faixa_de_decisao:bandRule(r.score),resultado_automatico:'retido para revisão humana',id_supervisor:r.supervisor.id,resultado_final:c.pill,motivo:r.motivo};
+      var audit={protocolo:proto(r.ts),id_pedido:r.pedido,timestamp:r.ts,sinais_ativados:r.sinais.map(function(k){return {sinal:SIGNALS[k].label,peso:(r.pesos&&r.pesos[k]!=null)?r.pesos[k]:DEFW[k]};}),pontuacao_total:r.score,faixa_de_decisao:bandRule(r.score),resultado_automatico:'retido para revisão humana',id_supervisor:r.supervisor.id,resultado_final:c.pill,motivo:r.motivo};
       out+='<article class="h-item"><div class="h-ic p-'+r.decisao+'">'+ic(c.icon,20)+'</div><div class="h-body"><div class="h-top"><span class="mono" style="font-size:13px">'+r.pedido+'</span><span class="pill p-'+r.decisao+'">'+c.pill+'</span></div>'+
         '<div class="h-line">'+brl(r.valor)+' · '+r.canal+' · risco '+r.score+'</div>'+(r.motivo?'<div style="font-size:13px;margin-top:4px"><b>Motivo:</b> '+esc(r.motivo)+'</div>':'')+
         '<p class="just">“'+esc(r.justificativa)+'”</p><div class="h-meta">'+esc(r.supervisor.nome)+' · '+dt(r.ts)+'</div>'+
@@ -770,10 +784,13 @@ pre{margin:4px 0 0;padding:12px;border-radius:12px;background:var(--surface-2);f
     var sc=simScore();
     return shell('<header class="top"><div class="grow"><h1>Regras do motor</h1><div class="sub">Sinais, pesos e faixas de decisão</div></div><button class="avatar s" data-act="profile" aria-label="Abrir perfil">'+SUP.ini+'</button></header>'+
       '<main class="screen" id="screen"><section class="card"><h2>Simulador de pontuação<small>ligue os sinais</small></h2>'+gauge(sc,'g-sim')+'<div style="margin-top:14px">'+sw+'</div></section>'+
+      '<section class="card"><h2>Pesos da empresa<small>'+(wChanged()?'personalizado':'padrão do relatório')+'</small></h2>'+wrows()+'<p class="note" style="margin-top:10px">Cada empresa pode ajustar o peso de cada sinal. Isso muda a pontuação e a faixa dos pedidos da fila. Decisões já registradas no histórico mantêm a pontuação e os pesos da época.</p>'+(wChanged()?'<button class="btn sec sm" style="margin-top:10px" data-act="wreset">Restaurar pesos do relatório</button>':'')+'</section>'+
       '<section class="card"><h2>Faixas de decisão</h2><div class="band3 dim" id="bands"><div class="l"><b>0 a 29</b><span>Aprovação automática</span></div><div class="m"><b>30 a 59</b><span>Revisão humana: pedido retido e enviado ao app</span></div><div class="h"><b>60 ou mais</b><span>Bloqueio com revisão humana obrigatória</span></div></div><p class="note" style="margin-top:12px">Não existe bloqueio definitivo automático: a decisão final é sempre de uma pessoa.</p></section>'+
       '<section class="card"><h2>Custo do erro</h2><dl class="kv"><dt>Perda média por chargeback</dt><dd class="mono">R$ 413</dd><dt>Custo de um falso positivo</dt><dd class="mono">R$ 15</dd><dt>Proporção C_FN / C_FP</dt><dd class="mono">≈ 27</dd></dl><p class="note" style="margin-top:10px">Aprovar um pedido arriscado custa muito mais que reter um legítimo, então o motor é conservador nas faixas altas.</p></section>'+
       '<section class="card"><h2>Conformidade com a LGPD</h2><ul class="chk"><li><span class="ok">'+ic('check',14)+'</span><span>Toda pontuação a partir de 30 passa por revisão humana (art. 20).</span></li><li><span class="ok">'+ic('check',14)+'</span><span>Sinais, pesos e pontuação ficam registrados para responder ao titular em até 5 dias úteis.</span></li><li><span class="ok">'+ic('check',14)+'</span><span>CPF oculto nas telas principais e acesso com log.</span></li><li><span class="ok">'+ic('check',14)+'</span><span>Sem ajuste por CEP ou região, para não discriminar por localidade.</span></li></ul></section></main>'+nav());
   }
+  function wrows(){return SKEYS.map(function(k){var g=SIGNALS[k],c=g.w!==DEFW[k];
+    return '<div class="wrow'+(c?' chg':'')+'"><span>'+g.label+'</span><div class="wst"><button data-act="wdec" data-v="'+k+'" aria-label="Diminuir peso: '+g.short+'"'+(g.w<=0?' disabled':'')+'>−</button><output aria-label="Peso atual">+'+g.w+'</output><button data-act="winc" data-v="'+k+'" aria-label="Aumentar peso: '+g.short+'"'+(g.w>=60?' disabled':'')+'>+</button></div><small>Padrão do relatório: +'+DEFW[k]+'</small></div>';}).join('');}
   function simScore(){var s=0;SKEYS.forEach(function(k){if(state.rsim[k])s+=SIGNALS[k].w;});return Math.min(100,s);}
   function updateSim(){
     var s=simScore();
@@ -813,7 +830,7 @@ pre{margin:4px 0 0;padding:12px;border-radius:12px;background:var(--surface-2);f
   }
   function registrar(){
     var o=getOrder(state.sel),d=state.dec;
-    var rec={pedido:o.id,valor:o.valor,canal:o.canal,score:scoreOf(o),sinais:o.sinais.slice(),decisao:d.opcao,motivo:d.opcao==='rejeitar'?d.motivo:null,justificativa:d.texto.trim(),supervisor:{nome:SUP.nome,id:SUP.id},ts:new Date().toISOString()};
+    var rec={pedido:o.id,valor:o.valor,canal:o.canal,score:scoreOf(o),sinais:o.sinais.slice(),pesos:(function(){var q={};o.sinais.forEach(function(k){q[k]=SIGNALS[k].w;});return q;})(),decisao:d.opcao,motivo:d.opcao==='rejeitar'?d.motivo:null,justificativa:d.texto.trim(),supervisor:{nome:SUP.nome,id:SUP.id},ts:new Date().toISOString()};
     decisions.unshift(rec);save();
     state.last=rec;state.dec={opcao:null,motivo:null,texto:'',confirm:false};
     go('done');
@@ -845,6 +862,8 @@ pre{margin:4px 0 0;padding:12px;border-radius:12px;background:var(--surface-2);f
     else if(a==='cancelConfirm'){state.dec.confirm=false;render();}
     else if(a==='confirm'){registrar();}
     else if(a==='reset'){decisions=[];try{localStorage.removeItem(KEY);}catch(err){}render();toast('Dados de demonstração restaurados');}
+    else if(a==='winc'||a==='wdec'){var g=SIGNALS[v];g.w=Math.max(0,Math.min(60,g.w+(a==='winc'?5:-5)));saveW();render();}
+    else if(a==='wreset'){SKEYS.forEach(function(k){SIGNALS[k].w=DEFW[k];});saveW();render();toast('Pesos do relatório restaurados');}
     else if(a==='sim'){
       var p=PART[v];
       if(p.failing){p.failing=false;plog(p.nome+' voltou a responder.','ok');}
